@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http:/www.thymeleaf.org">
+  
+<head th:include="administrador/templateAdmin.html::header"></head>
+
+
+<body> 
+
+  <div th:include="administrador/templateAdmin.html::nav"></div>
+
+<div class="container">
+
+  <h1 class="mt-4 mb-3"> <small>Usuarios</small></h1>
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Email</th>
+        <th scope="col">Dirección</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="usuario:${usuarios}">
+        <td th:text="${usuario.nombre}"></td>
+        <td th:text="${usuario.email}"></td>
+        <td th:text="${usuario.direccion}"></td>
+      </tr>       
+    </tbody>
+  </table>
+
+</div>
+<!-- /.container -->
+
+<div th:include="administrador/templateAdmin.html::script"></div>
+</body>
+
+</html>

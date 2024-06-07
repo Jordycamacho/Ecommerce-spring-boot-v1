@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http:/www.thymeleaf.org">
+
+<head th:include="usuario/template.html::header"></head>
+
+<body> 
+
+    <div th:include="usuario/template.html::nav_t"></div>
+
+    
+       <!-- Navbar-->
+       <nav th:include="usuario/template.html::nav"></nav>
+
+       
+        <!-- Logig-->
+        <div class="container login">
+            <div class="row">
+                <div class="col-md-4" id="side1">
+                    <h3>Bienvenido</h3>
+                    <p>¿Ya tienes una cuenta?</p>
+                    <div id="btn"><a th:href="@{/usuario/ingresar}">Ingresar</a></div>
+                </div>
+                <div class="col-md-8" id="side2">
+                    <h3>Crear Cuenta</h3>
+                    <div class="inp">
+                        <form th:action="@{/usuario/guardar}" method="post">
+                            <input type="text" placeholder="Nombre" id="nombre" name="nombre" required>
+                            <input type="email" placeholder="Email" id="email" name="email" required>
+                            <input type="text" placeholder="Direccion(Lugar de envio)" id="direccion" name="direccion" required>
+                            <input type="password" placeholder="Contraseña" id="password" name="password" required>
+                            <div id="login">
+                                <button type="submit">Crear</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                    <!--<p>¿Olvidaste tu contraseña?</p>
+                    <div class="icons">
+                        <i class="fa-brands fa-twitter"></i>
+                        <i class="fa-brands fa-facebook-f"></i>
+                        <i class="fa-brands fa-instagram"></i>
+                    </div>
+                    -->
+                    
+                </div>
+            </div>
+        </div>
+
+
+ <!-- Footer -->
+
+ <div th:include="usuario/template.html::footer"></div>
+
+ <div th:include="usuario/template.html::script"></div>
+
+</body>
+
+</html>

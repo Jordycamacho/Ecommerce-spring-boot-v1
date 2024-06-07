@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http:/www.thymeleaf.org">
+
+<head th:include="usuario/template.html::header"></head>
+
+<!-- Custom styles for this template
+<link th:href="@{/css/heroic-features.css}" rel="stylesheet">
+-->
+
+
+<body>
+
+	<div th:include="usuario/template.html::nav_t"></div>     
+        <!-- Navbar-->
+        <nav th:include="usuario/template.html::nav"></nav>
+		<!-- 
+        <nav th:include="usuario/template.html::nav" th:if="${session == null}"></nav>
+
+        <nav th:include="usuario/template.html::navAd" th:unless="${session == null}"></nav>
+        -->
+	<!-- Page Content -->
+	<div class="container">
+		<!-- Page Heading/Breadcrumbs -->
+		<h1 class="mt-4 mb-3"><small>Carrito</small></h1>
+
+		<!-- Blog Post -->
+		<div class="card mb-4  fonts">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-lg-9">
+						<table class="table tableo">
+							<thead>
+								
+								<tr>
+									<th scope="col">Producto</th>
+									<th scope="col">Precio</th>
+									<th scope="col">Cantidad</th>
+									<th scope="col">Total</th>
+									<th scope="col">Acción</th>
+								</tr>
+								
+							</thead>
+							<tbody>
+								
+								<tr th:each="dorden:${cart}">
+									<td th:text="${dorden.nombre}"></td>
+									<td th:text="${dorden.precio}"></td>
+									<td th:text="${dorden.cantidad}"></td>
+									<td th:text="${dorden.total}"></td>
+									<td><a th:href="@{/delete/cart/{id}   (id=${dorden.producto.id}) }" class="btc">Quitar</a></td>
+								</tr>
+							
+							</tbody>
+						</table>
+					</div>
+
+					<div class="col-lg-3">
+						<h2 class="card-title sub">SUBTOTAL</h2>
+
+						<ul class="list-group">
+							<li class="list-group-item "><h6 th:text="${orden.total}"></h6></li>
+							<a th:href="@{/orden}" class="btcc">Ver Orden</a>
+						</ul>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="error"></div>
+	<div th:include="usuario/template.html::politica"></div>
+
+    <!-- Footer -->
+    <div th:include="usuario/template.html::footer"></div>
+
+    <div th:include="usuario/template.html::script"></div>
+
+</body>
+
+</html>

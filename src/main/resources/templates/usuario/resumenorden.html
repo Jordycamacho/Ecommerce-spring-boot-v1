@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:include="usuario/template.html::header">
+</head>
+<body>
+    <div th:include="usuario/template.html::nav_t"></div>
+    <!-- Navbar-->
+    <nav th:include="usuario/template.html::nav"></nav>
+    <!-- Page Content -->
+    <div class="container">
+        <!-- Page Heading/Breadcrumbs -->
+        <h1 class="mt-4 mb-3"> <small>Resumen de la orden</small></h1>
+        <!-- Blog Post -->
+        <div class="card mb-4 fonts">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                DATOS ORDEN
+                            </h5>
+                            <h6 th:text=" 'Nombre: '+ ${usuario.nombre}"> </h6>
+                            <h6 th:text="'Correo: '+  ${usuario.email}"></h6>
+                            <h6 th:text="'Direccion de envio: '+  ${usuario.direccion}"></h6>
+                            <h5 class="card-title">
+                                PRODUCTOS
+                            </h5>
+                            <div class="alert alert-light" role="alert">
+                                <table class="table tableo">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Producto</th>
+                                            <th scope="col">Precio</th>
+                                            <th scope="col">Cantidad</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="dtorden:${cart}">
+                                            <td th:text="${dtorden.nombre}"></td>
+                                            <td th:text="${dtorden.precio}"></td>
+                                            <td th:text="${dtorden.cantidad}"></td>
+                                            <td th:text="${dtorden.total}"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <h4 class="card-title">Resumen Orden</h4> <br>
+                        <!-- Aquí la sección de pago -->
+                        <div id="payment-container">
+                            <h6>Realizar pago</h6>
+                            <br>
+                            <!-- Mostrar errores -->
+                            <div id="error-message" role="alert"></div>
+                            
+                            
+                            <form id="payment-form" action="#" method="post">
+
+                                <input id="api-key" type="hidden" th:value="${stripePublicKey}">
+
+                                <div class="w-100" id="card-element"></div> <br>
+
+                                <div class="form-group">
+                                    <input class="form-control" id="email" name="email"
+                                           placeholder="Email Address" type="email" required>
+                                </div>
+
+                                <div class="text-danger w-100" id="card-errors" role="alert"></div>
+
+                                
+                                <button class="btcc" id="submitButton" type="submit">Pagar</button>
+                                
+                            </form>
+                            
+                            
+
+                        </div>
+                        <br>
+                        <ul class="list-group">
+                            <li class="list-group-item"><h6 th:text=" 'Total: '+ ${orden.total} + ' $'"></h6></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+    <!-- Footer -->
+    <div th:include="usuario/template.html::footer"></div>
+    <div th:include="usuario/template.html::script"></div>
+    <script>
+        $(function () {
+            var API_KEY = $('#api-key').val();
+            // Create a Stripe client.
+            var stripe = Stripe(API_KEY);
+    
+            // Create an instance of Elements.
+            var elements = stripe.elements();
+    
+            // Create an instance of the card Element.
+            var card = elements.create('card');
+    
+            // Add an instance of the card Element into the `card-element` <div>.
+            card.mount('#card-element');
+    
+            // Handle real-time validation errors from the card Element.
+            card.addEventListener('change', function (event) {
+                var displayError = document.getElementById('card-errors');
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+    
+            // Handle form submission.
+            var form = document.getElementById('payment-form');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                // handle payment
+                handlePayments();
+            });
+    
+            //handle card submission
+            function handlePayments() {
+                stripe.createToken(card).then(function (result) {
+                    if (result.error) {
+                        // Inform the user if there was an error.
+                        var errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                    } else {
+                        // Send the token to your server.
+                        var token = result.token.id;
+                        var email = $('#email').val();
+                        $.post(
+                            "/salvarOrden",
+                            {email: email, token: token},
+                            function (data) {
+                                alert(data.details);
+                            }, 'json');
+                    }
+                });
+            }
+        });
+    </script>
+
+
+
+</body>
+</html>
