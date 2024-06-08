@@ -1,26 +1,23 @@
 package com.example.tienda.controller;
-
-import java.io.IOException;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.example.tienda.service.UploadFileService;
+import com.example.tienda.service.ProductoService;
+import com.example.tienda.service.IUsuarioService;
+import org.springframework.stereotype.Controller;
 
 import com.example.tienda.model.Producto;
 import com.example.tienda.model.Usuario;
-import com.example.tienda.service.IUsuarioService;
-import com.example.tienda.service.ProductoService;
-import com.example.tienda.service.UploadFileService;
-
 import jakarta.servlet.http.HttpSession;
+import org.springframework.ui.Model;
+import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/productos")
@@ -70,11 +67,7 @@ public class ProductoController {
     @PostMapping("/save")
     public String save(Producto producto, @RequestParam("img") MultipartFile file, HttpSession session)
             throws IOException {
-        
-        Usuario u = usuarioservice.findById(Long.parseLong(session.getAttribute("idusuario").toString())).get();
-
-        producto.setUsuario(u);
-
+    
         if (producto.getId() == null) {
             String nombreImagen = upload.saveImages(file);
             producto.setImagen(nombreImagen);
@@ -113,7 +106,7 @@ public class ProductoController {
 
     @PostMapping("/update")
     public String update(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
-
+        System.out.println("Producto recibido: " + producto);
         if (producto.getId() == null) {
             System.out.println("LA ID ESTA VACIA");
         }
@@ -139,7 +132,6 @@ public class ProductoController {
 
             producto.setImagen(nombreImagen);
         }
-        producto.setUsuario(p.getUsuario());
         productoService.update(producto);
 
         return "redirect:/productos";

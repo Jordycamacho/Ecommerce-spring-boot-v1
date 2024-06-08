@@ -4,108 +4,92 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "productos")
 public class Producto {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String nombre;
-	private String descripcion;
-	private String categoria;
-	private String imagen;
-	private double precio;
-	private int cantidad;
-	
-	@ManyToOne
-	private Usuario usuario;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nombre;
+    private String descripcion;
+    private String categoria;
+    private String imagen;
+    private double precio;
+    private int cantidad;
 
-	public Producto( String nombre, String descripcion, String categoria, String imagen, double precio,
-			int cantidad,
-			Usuario usuario) {
-		super();
-		
-		this.nombre = nombre;
-		this.descripcion = descripcion;
-		this.categoria = categoria;
-		this.imagen = imagen;
-		this.precio = precio;
-		this.cantidad = cantidad;
-		this.usuario = usuario;
-	}
+    public Producto(String nombre, String descripcion, String categoria, String imagen, double precio, int cantidad) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.categoria = categoria;
+        this.imagen = imagen;
+        this.precio = precio;
+        this.cantidad = cantidad;
+    }
 
-	public Producto() {
-		super();
-	}
+    public Producto() {
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public String getCategoria() {
-		return categoria;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
-	}
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	public String getDescripcion() {
-		return descripcion;
-	}
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
+    public String getCategoria() {
+        return categoria;
+    }
 
-	public String getImagen() {
-		return imagen;
-	}
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 
-	public void setImagen(String imagen) {
-		this.imagen = imagen;
-	}
+    public String getImagen() {
+        return imagen;
+    }
 
-	public double getPrecio() {
-		return precio;
-	}
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
 
-	public void setPrecio(double precio) {
-		this.precio = precio;
-	}
+    public double getPrecio() {
+        return precio;
+    }
 
-	public int getCantidad() {
-		return cantidad;
-	}
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
 
-	public void setCantidad(int cantidad) {
-		this.cantidad = cantidad;
-	}
+    public int getCantidad() {
+        return cantidad;
+    }
 
-	public Usuario getUsuario() {
-		return usuario;
-	}
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	@Override
-	public String toString() {
-		return "Productos [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + " categoria = " + categoria + 
-		", imagen=" + imagen + ", precio=" + precio + ", cantidad=" + cantidad + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", categoria=" + categoria + 
+                ", imagen=" + imagen + ", precio=" + precio + ", cantidad=" + cantidad + "]";
+    }
 }
