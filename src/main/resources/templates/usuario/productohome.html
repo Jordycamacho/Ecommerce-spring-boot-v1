@@ -2,7 +2,18 @@
 <html lang="es" xmlns:th="http:/www.thymeleaf.org">
 
 <head th:include="usuario/template.html::header">
-	
+	<script>
+        function verificarCantidad(maxCantidad) {
+            const cantidadInput = document.getElementById('cantidad');
+            const cantidad = parseInt(cantidadInput.value);
+            if (cantidad > maxCantidad) {
+                alert('La cantidad seleccionada supera la cantidad disponible.');
+                cantidadInput.value = maxCantidad;
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 
 <body>  
@@ -38,7 +49,7 @@
 								</li>
 								<li class="list-group-item"><p>
 										Cantidad: <input type="number" id="cantidad" name="cantidad"
-											autocomplete="off" min="1" max="5" value="1">
+											autocomplete="off" min="1" th:attr="max=${producto.cantidad}" value="1">
 								</p></li>
 							</ul>
 

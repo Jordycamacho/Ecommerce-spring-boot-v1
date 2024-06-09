@@ -38,8 +38,11 @@
                         <h5 class="card-title" th:text="${producto.nombre}"></h5>
                         <p th:text="${producto.descripcion}"></p>
                         <p><strong th:text="'$' + ${producto.precio}"></strong></p>
-                        <button type="submit">
-                            <a class="product-link" th:href="@{/vistaproducto/{id} (id=${producto.id})}">Ver Producto</a>
+                        <button type="submit" th:style="${producto.cantidad == 0} ? 'display:none' : ''">
+                            <a class="product-link" th:href="@{/vistaproducto/{id} (id=${producto.id})}" th:style="${producto.cantidad == 0} ? 'display:none' : ''">Ver Producto</a>
+                        </button>
+                        <button type="button" th:unless="${producto.cantidad > 0}" disabled >
+                            No disponible
                         </button>
                     </div>
                 </div>
@@ -66,8 +69,11 @@
                 <div class="card h-100">
                     <img class="card-img-top" th:src="@{/images/{img} (img=${producto.imagen})}" alt="">
                     <h3 th:text="${producto.nombre}"></h3>
-                    <button class="btp">
-                        <a th:href="@{/vistaproducto/{id} (id=${producto.id})}">Ver</a>
+                    <button class="btp" th:style="${producto.cantidad == 0} ? 'display:none' : ''">
+                        <a th:href="@{/vistaproducto/{id} (id=${producto.id})}" >Ver Producto</a>
+                    </button>
+                    <button type="button" th:unless="${producto.cantidad > 0}" disabled class="btp">
+                        No disponible
                     </button>
                 </div>
             </div>

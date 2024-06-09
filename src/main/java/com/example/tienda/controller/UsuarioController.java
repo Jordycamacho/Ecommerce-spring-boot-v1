@@ -113,6 +113,12 @@ public class UsuarioController {
         log.info("Cantidad: {}", cantidad);
         producto = optionalProducto.get();
 
+        if (cantidad > producto.getCantidad()) {
+            model.addAttribute("error", "La cantidad seleccionada supera la cantidad disponible.");
+            model.addAttribute("producto", producto);
+            return "usuario/productohome";
+        }
+        
         detalleOrden.setCantidad(cantidad);
         detalleOrden.setPrecio(producto.getPrecio());
         detalleOrden.setNombre(producto.getNombre());
@@ -197,67 +203,72 @@ public class UsuarioController {
     }
 
 
-    // Guardar La orden
     @CrossOrigin
     @PostMapping("/salvarOrden")
-    public RedirectView saveOrden(HttpSession session, Model model, String email, String token) {
-
-         int centavos = (int) (orden.getTotal() * 100);
-
-        String chargeId = stripeService.createCharge(email, token, centavos);
-
-         
-        if (token == null) {
-            return new RedirectView ("/orden");
-		}
-        
-        if (chargeId == null) {
-            return new RedirectView ("/orden");
-		}
+    public String saveOrden(HttpSession session, Model model, String email, String token) {
+        try {
+            int centavos = (int) (orden.getTotal() * 100);
     
-        // hasta aqui
-        Date fechaDeCreacion = new Date();
-        orden.setFechaCreada(fechaDeCreacion);
-        orden.setNumero(ordenService.generarNumeroOrden());
-
-        Usuario usuario = usuarioService.findById(Long.parseLong(session.getAttribute("idusuario").toString())).get();
-
-        orden.setUsuario(usuario);
-        ordenService.save(orden);
-
-        // guardar detalles
-        for (DetalleOrden dt : detalles) {
-            dt.setOrden(orden);
-            detalleOrdenService.save(dt);
+            String chargeId = stripeService.createCharge(email, token, centavos);
+    
+            if (token == null || chargeId == null) {
+                return "/orden";
+            }
+    
+            Date fechaDeCreacion = new Date();
+            orden.setFechaCreada(fechaDeCreacion);
+            orden.setNumero(ordenService.generarNumeroOrden());
+    
+            Usuario usuario = usuarioService.findById(Long.parseLong(session.getAttribute("idusuario").toString())).get();
+    
+            orden.setUsuario(usuario);
+            ordenService.save(orden);
+    
+            // guardar detalles
+            for (DetalleOrden dt : detalles) {
+                dt.setOrden(orden);
+                detalleOrdenService.save(dt);
+            }
+    
+            // Disminuir la cantidad de los productos solo si el pago es exitoso
+            for (DetalleOrden dt : detalles) {
+                Producto producto = dt.getProducto();
+                int nuevaCantidad = (int) (producto.getCantidad() - dt.getCantidad());
+                producto.setCantidad(nuevaCantidad);
+                productoService.update(producto);
+            }
+    
+            // Recopila la información de la orden y el cliente
+            String nombreCliente = usuario.getNombre();
+            String correoCliente = usuario.getEmail();
+            String direccionCliente = usuario.getDireccion();
+            String mycorreo = "jordycamacho225@gmail.com";
+    
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.append("Información de la Orden:\n");
+            mensaje.append("Número de Orden: ").append(orden.getNumero()).append("\n");
+            mensaje.append("Fecha de Creación: ").append(orden.getFechaCreada()).append("\n");
+            mensaje.append("Total de la Orden: ").append(orden.getTotal()).append(" $").append("\n");
+            mensaje.append("\nInformación del Cliente:\n");
+            mensaje.append("Nombre: ").append(nombreCliente).append("\n");
+            mensaje.append("Correo: ").append(correoCliente).append("\n");
+            mensaje.append("Dirección de Envío: ").append(direccionCliente).append("\n");
+    
+            // Envía el correo electrónico
+            String[] destinatarios = { correoCliente, mycorreo };
+            String asunto = "Detalles de la Orden";
+            emailService.sendEmail(destinatarios, asunto, mensaje.toString());
+    
+            // limpiar lista y orden
+            orden = new Orden();
+            detalles.clear();
+    
+            return "/usuario/compras";
+    
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "/orden";
         }
-
-        // Recopila la información de la orden y el cliente
-        String nombreCliente = usuario.getNombre();
-        String correoCliente = usuario.getEmail();
-        String direccionCliente = usuario.getDireccion();
-        String mycorreo = "jordycamacho225@gmail.com";
-
-        StringBuilder mensaje = new StringBuilder();
-        mensaje.append("Información de la Orden:\n");
-        mensaje.append("Número de Orden: ").append(orden.getNumero()).append("\n");
-        mensaje.append("Fecha de Creación: ").append(orden.getFechaCreada()).append("\n");
-        mensaje.append("Total de la Orden: ").append(orden.getTotal()).append(" $").append("\n");
-        mensaje.append("\nInformación del Cliente:\n");
-        mensaje.append("Nombre: ").append(nombreCliente).append("\n");
-        mensaje.append("Correo: ").append(correoCliente).append("\n");
-        mensaje.append("Dirección de Envío: ").append(direccionCliente).append("\n");
-
-        // Envía el correo electrónico
-        String[] destinatarios = { correoCliente, mycorreo };
-        String asunto = "Detalles de la Orden";
-        emailService.sendEmail(destinatarios, asunto, mensaje.toString());
-
-        /// limpiar lista y orden
-        orden = new Orden();
-        detalles.clear();
-
-        return new RedirectView ("/usuario/compras");
-
     }
 
 
