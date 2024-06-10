@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head th:include="usuario/template.html::header">
 </head>
+
 <body>
     <div th:include="usuario/template.html::nav_t"></div>
     <!-- Navbar-->
@@ -55,32 +57,23 @@
                             <br>
                             <!-- Mostrar errores -->
                             <div id="error-message" role="alert"></div>
-                            
-                            
-                            <form id="payment-form" action="#" method="post">
 
+                            <form id="payment-form" action="#" method="post">
                                 <input id="api-key" type="hidden" th:value="${stripePublicKey}">
+                                <input id="email" type="hidden" th:value="${usuario.email}">
 
                                 <div class="w-100" id="card-element"></div> <br>
 
-                                <div class="form-group">
-                                    <input class="form-control" id="email" name="email"
-                                           placeholder="Email Address" type="email" required>
-                                </div>
-
                                 <div class="text-danger w-100" id="card-errors" role="alert"></div>
 
-                                
                                 <button class="btcc" id="submitButton" type="submit">Pagar</button>
-                                
                             </form>
-                            
-                            
-
                         </div>
                         <br>
                         <ul class="list-group">
-                            <li class="list-group-item"><h6 th:text=" 'Total: '+ ${orden.total} + ' $'"></h6></li>
+                            <li class="list-group-item">
+                                <h6 th:text=" 'Total: '+ ${orden.total} + ' $'"></h6>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -94,18 +87,19 @@
     <script>
         $(function () {
             var API_KEY = $('#api-key').val();
+            var userEmail = $('#email').val();
             // Create a Stripe client.
             var stripe = Stripe(API_KEY);
-    
+
             // Create an instance of Elements.
             var elements = stripe.elements();
-    
+
             // Create an instance of the card Element.
             var card = elements.create('card');
-    
+
             // Add an instance of the card Element into the `card-element` <div>.
             card.mount('#card-element');
-    
+
             // Handle real-time validation errors from the card Element.
             card.addEventListener('change', function (event) {
                 var displayError = document.getElementById('card-errors');
@@ -115,16 +109,16 @@
                     displayError.textContent = '';
                 }
             });
-    
+
             // Handle form submission.
             var form = document.getElementById('payment-form');
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
-                // handle payment
+                // Handle payment
                 handlePayments();
             });
-    
-            //handle card submission
+
+            // Handle card submission
             function handlePayments() {
                 stripe.createToken(card).then(function (result) {
                     if (result.error) {
@@ -134,20 +128,24 @@
                     } else {
                         // Send the token to your server.
                         var token = result.token.id;
-                        var email = $('#email').val();
                         $.post(
                             "/salvarOrden",
-                            {email: email, token: token},
+                            { email: userEmail, token: token },
                             function (data) {
-                                alert(data.details);
-                            }, 'json');
+                                if (data.status === "success") {
+                                    // Redirect to the URL provided in the response
+                                    window.location.href = data.redirectUrl;
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            'json'
+                        );
                     }
                 });
             }
         });
     </script>
-
-
-
 </body>
+
 </html>

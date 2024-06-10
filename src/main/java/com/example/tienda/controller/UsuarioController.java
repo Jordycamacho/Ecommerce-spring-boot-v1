@@ -2,7 +2,9 @@ package com.example.tienda.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -10,7 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.tienda.model.Contacto;
 import com.example.tienda.model.DetalleOrden;
@@ -61,14 +63,14 @@ public class UsuarioController {
     private IEmailService emailService;
 
     @Autowired
-	private StripeService stripeService;
-    
+    private StripeService stripeService;
+
     @Value("${stripe.key.public}")
-	private String API_PUBLIC_KEY;
+    private String API_PUBLIC_KEY;
 
     public UsuarioController(StripeService stripeService) {
-		this.stripeService = stripeService;
-	}
+        this.stripeService = stripeService;
+    }
 
     // para almacenar los detalles de la orden
     List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
@@ -118,7 +120,7 @@ public class UsuarioController {
             model.addAttribute("producto", producto);
             return "usuario/productohome";
         }
-        
+
         detalleOrden.setCantidad(cantidad);
         detalleOrden.setPrecio(producto.getPrecio());
         detalleOrden.setNombre(producto.getNombre());
@@ -191,45 +193,47 @@ public class UsuarioController {
         }
         Usuario usuario = usuarioService.findById(Long.parseLong(session.getAttribute("idusuario").toString())).get();
 
-        
         model.addAttribute("cart", detalles);
         model.addAttribute("orden", orden);
         model.addAttribute("usuario", usuario);
 
-        //agrega la clave de stripe
+        // agrega la clave de stripe
         model.addAttribute("stripePublicKey", API_PUBLIC_KEY);
 
         return "usuario/resumenorden";
     }
 
-
     @CrossOrigin
     @PostMapping("/salvarOrden")
-    public String saveOrden(HttpSession session, Model model, String email, String token) {
+    public ResponseEntity<Map<String, String>> saveOrden(HttpSession session, Model model, String email, String token) {
+        Map<String, String> response = new HashMap<>();
         try {
             int centavos = (int) (orden.getTotal() * 100);
-    
+
             String chargeId = stripeService.createCharge(email, token, centavos);
-    
+
             if (token == null || chargeId == null) {
-                return "/orden";
+                response.put("status", "error");
+                response.put("message", "Error al procesar el pago.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
-    
+
             Date fechaDeCreacion = new Date();
             orden.setFechaCreada(fechaDeCreacion);
             orden.setNumero(ordenService.generarNumeroOrden());
-    
-            Usuario usuario = usuarioService.findById(Long.parseLong(session.getAttribute("idusuario").toString())).get();
-    
+
+            Usuario usuario = usuarioService.findById(Long.parseLong(session.getAttribute("idusuario").toString()))
+                    .get();
+
             orden.setUsuario(usuario);
             ordenService.save(orden);
-    
+
             // guardar detalles
             for (DetalleOrden dt : detalles) {
                 dt.setOrden(orden);
                 detalleOrdenService.save(dt);
             }
-    
+
             // Disminuir la cantidad de los productos solo si el pago es exitoso
             for (DetalleOrden dt : detalles) {
                 Producto producto = dt.getProducto();
@@ -237,13 +241,13 @@ public class UsuarioController {
                 producto.setCantidad(nuevaCantidad);
                 productoService.update(producto);
             }
-    
+
             // Recopila la información de la orden y el cliente
             String nombreCliente = usuario.getNombre();
             String correoCliente = usuario.getEmail();
             String direccionCliente = usuario.getDireccion();
             String mycorreo = "jordycamacho225@gmail.com";
-    
+
             StringBuilder mensaje = new StringBuilder();
             mensaje.append("Información de la Orden:\n");
             mensaje.append("Número de Orden: ").append(orden.getNumero()).append("\n");
@@ -253,24 +257,28 @@ public class UsuarioController {
             mensaje.append("Nombre: ").append(nombreCliente).append("\n");
             mensaje.append("Correo: ").append(correoCliente).append("\n");
             mensaje.append("Dirección de Envío: ").append(direccionCliente).append("\n");
-    
+
             // Envía el correo electrónico
             String[] destinatarios = { correoCliente, mycorreo };
             String asunto = "Detalles de la Orden";
             emailService.sendEmail(destinatarios, asunto, mensaje.toString());
-    
+
             // limpiar lista y orden
             orden = new Orden();
             detalles.clear();
-    
-            return "/usuario/compras";
-    
+
+            response.put("status", "success");
+            response.put("message", "Orden guardada exitosamente.");
+            response.put("redirectUrl", "/usuario/compras");
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return "/orden";
+            response.put("status", "error");
+            response.put("message", "Hubo un error al procesar la orden.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
 
     @PostMapping("/buscar")
     public String searchProducto(@RequestParam String nombre, Model model) {
