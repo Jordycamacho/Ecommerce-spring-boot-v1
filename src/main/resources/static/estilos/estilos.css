@@ -368,6 +368,9 @@ button a {
 .product-image {
     width: 100%;
     height: auto;
+    max-width: 300px;
+    max-height: 300px;
+    object-fit: contain;
 }
 
 .product-link {
@@ -447,22 +450,7 @@ button a {
     .product-container {
         margin: 0px;
     }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}  
 
 #top-cards {
     margin-top: 30px;
@@ -518,7 +506,7 @@ button:hover {
     width: 100%;
     height: 50vh;
     margin-top: 50px;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(/images/banner.jpeg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(/images/banner1.jpg);
 }
 
 .banner .content {
@@ -554,7 +542,7 @@ button:hover {
     margin-top: 50px;
     object-fit: cover;
     object-position: center;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(/images/banner.jpeg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(/images/banner1.jpg);
 }
 
 .banner2 .content {
