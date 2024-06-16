@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http:/www.thymeleaf.org">
+
+<head th:include="usuario/template.html::header"></head>
+
+<body>
+
+    <div th:include="usuario/template.html::nav_t"></div>
+
+    <div>
+
+        <!-- Navbar-->
+        <nav th:include="usuario/template.html::nav"></nav>
+
+        <div class="banner2">
+            <div class="content">
+                <h1>Ver todos los productos</h1>
+                <div id="bannerbtn2"><button>Ver màs</button></div>
+            </div>
+        </div>
+
+        <!--Productos-->
+        <!-- productos-->
+
+        <div class="container" id="product-cards">
+            <h1 class="text-center">PRODUCTOS</h1>
+
+            <div class="productos-container">
+                <div class="producto" th:each="producto: ${productos}">
+                    <div class="card h-100">
+                        <img class="card-img-top" th:src="@{/images/{img} (img=${producto.imagen})}" alt="">
+                        <h3 th:text="${producto.nombre}"></h3>
+                        <button class="btp">
+                            <a th:href="@{/vistaproducto/{id} (id=${producto.id})}">Ver</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <a th:href="@{/producto}" id="viewmorebtn"> ver mas </a>
+        </div>
+        <div th:include="usuario/template.html::politica"></div>
+
+        <!-- Footer -->
+        <div th:include="usuario/template.html::footer"></div>
+    
+        <div th:include="usuario/template.html::script"></div>
+    
+    </body>
+    
+    </html>

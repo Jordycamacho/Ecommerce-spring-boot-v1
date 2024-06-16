@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http:/www.thymeleaf.org">
+  
+<head th:include="administrador/templateAdmin.html::header"></head>
+
+
+<body> 
+
+  <!-- Navigation -->
+  <div th:include="administrador/templateAdmin.html::nav"></div>
+
+    <!-- Page Content -->
+    <div class="container">
+
+
+      <!-- Page Heading/Breadcrumbs -->
+      <h1 class="mt-4 mb-3">
+       <small>Mensajes</small>
+      </h1>
+
+      <!-- Blog Post -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row">
+           <div class="col-lg-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Fecha de envio</th>
+                  <th scope="col">Nombre</th>                  
+                  <th scope="col">Correo</th>
+                  <th scope="col">Numero</th>      
+                  <th scope="col">Mensaje</th>
+                  <th scope="col">Accion</th>           
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="contacto:${contact}">
+                  <td th:text="${contacto.fechaCreada}"></td>
+                  <td th:text="${contacto.nombre}"></td>
+                  <td th:text="${contacto.email}"></td>
+                  <td th:text="${contacto.numero}"></td>
+                  <td th:text="${contacto.mensaje}"></td>
+                  <td><a  class="btn btn-danger" th:href="@{/administrador/eliminar/{id} (id=${contacto.id})}">Eliminar</a> </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /.container -->
+
+  <div th:include="administrador/templateAdmin.html::script"></div>
+</body>
+
+</html>
