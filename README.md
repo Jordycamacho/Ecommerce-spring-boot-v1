@@ -9,10 +9,10 @@ GameXpress es un ecommerce especializado en la venta de videojuegos y accesorios
 
 ### Tecnologías Utilizadas
 
-- **HTML/CSS/BOOTSTRAP**: Para la estructura y diseño de la interfaz.
-- **JavaScript**: Para la funcionalidad de Stripe.
-- **Java**: Para la lógica del backend.
-- **Spring Boot**: Para la creación del backend en Java.
+- HTML/CSS/BOOTSTRAP: Para la estructura y diseño de la interfaz.
+- JavaScript: Para la funcionalidad de Stripe.
+- Java: Para la lógica del backend.
+- Spring Boot: Para la creación del backend en Java.
 
 ---
 
@@ -20,10 +20,10 @@ GameXpress es un ecommerce especializado en la venta de videojuegos y accesorios
 
 Para ejecutar este proyecto, asegúrate de tener instalados los siguientes componentes:
 
-1. **JDK 8 o superior**
-2. **Visual Studio Code**
-3. **Java Development Kit (JDK) para Visual Studio Code**
-4. **WAMP o XAMPP**
+1. JDK 8 o superior
+2. Visual Studio Code
+3. Java Development Kit (JDK) para Visual Studio Code
+4. WAMP o XAMPP
 
 ### Dependencias
 
