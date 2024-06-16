@@ -1,12 +1,4 @@
 ```markdown
-# GameXpress
-
----
-
-## GameXpress
-
-GameXpress es un ecommerce especializado en la venta de videojuegos y accesorios para gamers. Ofrecemos una amplia gama de productos para los aficionados de los videojuegos, incluyendo los últimos lanzamientos y los accesorios más innovadores.
-
 ### Tecnologías Utilizadas
 
 - HTML/CSS/BOOTSTRAP: Para la estructura y diseño de la interfaz.
@@ -71,6 +63,3 @@ git clone https://github.com/Jordycamacho/Ecommerce-spring-boot-v1.git
    Abre tu navegador y dirígete a la URL `http://localhost:8080`.
 
 ---
-
-¡Gracias por usar GameXpress! Happy Gaming! 🎮
-```
